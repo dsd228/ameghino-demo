@@ -1,0 +1,1887 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ameghino Inmobiliaria · Propuesta UX/UI Senior</title>
+  <meta name="description" content="Demo interactiva de landing inmobiliaria para Ameghino: filtros, propiedades, ficha individual, WhatsApp y tasaciones." />
+  <meta name="theme-color" content="#C8102E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --red:       #C8102E;
+      --red-dark:  #930C22;
+      --red-mid:   #E01835;
+      --red-soft:  #FFF0F2;
+      --red-glow:  rgba(200,16,46,.18);
+      --ink:       #0E0E10;
+      --ink-2:     #1C1C20;
+      --muted:     #5C5C66;
+      --muted-2:   #8E8E95;
+      --line:      #E8E8EC;
+      --line-dark: #2A2A2E;
+      --bg:        #F5F5F7;
+      --bg-2:      #FAFAFA;
+      --white:     #FFFFFF;
+      --green:     #22C55E;
+      --green-dark:#16A34A;
+      --gold:      #C69A40;
+      --shadow-sm: 0 4px 16px rgba(14,14,16,.07);
+      --shadow-md: 0 12px 40px rgba(14,14,16,.10);
+      --shadow-lg: 0 24px 72px rgba(14,14,16,.14);
+      --shadow-xl: 0 40px 120px rgba(14,14,16,.18);
+      --radius-sm: 10px;
+      --radius-md: 16px;
+      --radius-lg: 24px;
+      --radius-xl: 32px;
+      --container: 1180px;
+      --safe:      clamp(20px, 5vw, 72px);
+      --font:      'Montserrat', system-ui, -apple-system, sans-serif;
+      --font-serif:'Montserrat', system-ui, -apple-system, sans-serif;
+      --ease-out:  cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font);
+      color: var(--ink);
+      background: var(--white);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      overflow-x: hidden;
+    }
+    body.no-scroll { overflow: hidden; }
+    a { color: inherit; text-decoration: none; }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; border: 0; }
+    img { display: block; max-width: 100%; }
+    :focus-visible { outline: 2px solid var(--red); outline-offset: 3px; border-radius: 4px; }
+    .container { width: min(var(--container), calc(100% - var(--safe) * 2)); margin-inline: auto; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+    /* ── TOP NOTE ── */
+    .top-note {
+      background: var(--ink);
+      color: rgba(255,255,255,.7);
+      font-size: 12.5px;
+      font-weight: 500;
+      letter-spacing: .01em;
+      padding: 10px var(--safe);
+      text-align: center;
+      line-height: 1.5;
+    }
+    .top-note strong { color: var(--white); font-weight: 700; }
+    .top-note-dot {
+      display: inline-block;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--red);
+      margin-right: 8px;
+      vertical-align: middle;
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(200,16,46,.5); }
+      50% { box-shadow: 0 0 0 5px rgba(200,16,46,0); }
+    }
+
+    /* ── HEADER ── */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(255,255,255,.88);
+      border-bottom: 1px solid rgba(232,232,236,.7);
+      backdrop-filter: blur(20px) saturate(1.6);
+      -webkit-backdrop-filter: blur(20px) saturate(1.6);
+      transition: box-shadow .3s ease;
+    }
+    .site-header.scrolled { box-shadow: 0 4px 24px rgba(14,14,16,.08); }
+    .nav {
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 220px;
+      flex: 0 0 auto;
+    }
+    .brand-mark {
+      width: 44px; height: 44px;
+      border-radius: 14px;
+      background: linear-gradient(140deg, var(--red-mid) 0%, var(--red-dark) 100%);
+      display: grid;
+      place-items: center;
+      box-shadow: 0 8px 20px var(--red-glow);
+      flex: 0 0 auto;
+      transition: transform .2s var(--ease-out), box-shadow .2s ease;
+    }
+    .brand-mark:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(200,16,46,.28); }
+    .brand-mark svg { width: 26px; height: 26px; }
+    .brand-title { font-size: 15px; font-weight: 700; letter-spacing: .04em; line-height: 1; color: var(--ink); }
+    .brand-sub { margin-top: 3px; color: var(--muted-2); font-size: 11.5px; line-height: 1.2; font-weight: 400; }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .nav-links a {
+      position: relative;
+      padding: 8px 14px;
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--muted);
+      border-radius: 10px;
+      transition: color .2s ease, background .2s ease;
+    }
+    .nav-links a:hover { color: var(--ink); background: var(--bg); }
+    .nav-actions { display: flex; align-items: center; gap: 10px; }
+    .menu-btn {
+      display: none;
+      width: 42px; height: 42px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: var(--white);
+      color: var(--ink);
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+    .menu-btn span { display: block; width: 16px; height: 1.5px; background: currentColor; border-radius: 999px; transition: transform .2s ease, opacity .2s ease; }
+    .menu-btn.is-open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .menu-btn.is-open span:nth-child(2) { opacity: 0; }
+    .menu-btn.is-open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+    .mobile-menu {
+      display: none;
+      border-top: 1px solid var(--line);
+      background: var(--white);
+      padding: 12px var(--safe) 20px;
+    }
+    .mobile-menu.open { display: block; }
+    .mobile-menu a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 13px 0;
+      font-weight: 500;
+      font-size: 15px;
+      border-bottom: 1px solid var(--line);
+      color: var(--ink-2);
+    }
+    .mobile-menu a:last-of-type { border-bottom: 0; }
+
+    /* ── BUTTONS ── */
+    .btn {
+      min-height: 44px;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 11px 18px;
+      font-weight: 600;
+      font-size: 13.5px;
+      line-height: 1;
+      transition: transform .2s var(--ease-out), box-shadow .2s ease, background .2s ease, color .2s ease, border-color .2s ease, opacity .2s ease;
+      user-select: none;
+      white-space: nowrap;
+      position: relative;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn:active { transform: translateY(0); }
+    .btn svg { flex: 0 0 auto; }
+    .btn-primary {
+      background: var(--red);
+      color: var(--white);
+      box-shadow: 0 8px 24px var(--red-glow);
+    }
+    .btn-primary:hover { background: var(--red-mid); box-shadow: 0 12px 32px rgba(200,16,46,.28); }
+    .btn-dark { background: var(--ink); color: var(--white); box-shadow: var(--shadow-sm); }
+    .btn-dark:hover { background: var(--ink-2); box-shadow: var(--shadow-md); }
+    .btn-ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+    .btn-ghost:hover { border-color: var(--muted-2); background: var(--bg); }
+    .btn-white { background: var(--white); color: var(--red); box-shadow: var(--shadow-sm); }
+    .btn-white:hover { box-shadow: var(--shadow-md); }
+    .btn-whatsapp { background: var(--green); color: var(--white); box-shadow: 0 8px 24px rgba(34,197,94,.22); }
+    .btn-whatsapp:hover { background: var(--green-dark); box-shadow: 0 12px 32px rgba(34,197,94,.28); }
+    .btn-soft { background: var(--red-soft); color: var(--red-dark); border: 1px solid rgba(200,16,46,.14); }
+    .btn-soft:hover { background: #FFE4E8; }
+    .btn-lg { min-height: 50px; padding: 14px 22px; font-size: 14.5px; border-radius: 14px; }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(120deg, #FAFAF9 0%, #FFFFFF 50%, #FFF5F6 100%);
+      border-bottom: 1px solid var(--line);
+    }
+    .hero-bg-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(14,14,16,.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(14,14,16,.03) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black, transparent);
+      pointer-events: none;
+    }
+    .hero-bg-blob {
+      position: absolute;
+      right: -10%;
+      top: -20%;
+      width: 60%;
+      aspect-ratio: 1;
+      background: radial-gradient(circle, rgba(200,16,46,.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-grid {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(400px, .95fr);
+      align-items: center;
+      gap: 56px;
+      min-height: 700px;
+      padding: 80px 0 120px;
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--red);
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      margin-bottom: 22px;
+    }
+    .eyebrow-line { width: 28px; height: 2px; background: currentColor; border-radius: 999px; flex: 0 0 auto; }
+    .hero h1 {
+      max-width: 680px;
+      font-family: var(--font-serif);
+      font-size: clamp(46px, 5.5vw, 78px);
+      line-height: .96;
+      letter-spacing: -.02em;
+      font-weight: 900;
+    }
+    .hero h1 em { color: var(--red); font-style: italic; }
+    .hero-copy {
+      margin: 26px 0 0;
+      color: var(--muted);
+      max-width: 520px;
+      font-size: 17px;
+      line-height: 1.8;
+      font-weight: 400;
+    }
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 36px; }
+    .trust-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 40px;
+      max-width: 570px;
+    }
+    .trust-item {
+      background: rgba(255,255,255,.8);
+      border: 1px solid rgba(232,232,236,.9);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: var(--shadow-sm);
+      backdrop-filter: blur(8px);
+    }
+    .trust-item strong { display: block; font-size: 19px; line-height: 1; font-weight: 700; letter-spacing: -.02em; }
+    .trust-item span { display: block; margin-top: 5px; color: var(--muted); font-size: 11.5px; font-weight: 500; line-height: 1.4; }
+
+    .hero-media { position: relative; min-height: 520px; }
+    .hero-card {
+      position: absolute;
+      right: 0; top: 0;
+      width: min(100%, 500px);
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      box-shadow: var(--shadow-xl);
+      overflow: hidden;
+    }
+    .hero-image {
+      position: relative;
+      height: 290px;
+      background-size: cover;
+      background-position: center;
+    }
+    .hero-image::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0,0,0,0) 45%, rgba(0,0,0,.36) 100%);
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 26px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 10.5px;
+      line-height: 1;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .badge-red { background: var(--red); color: var(--white); }
+    .badge-dark { background: var(--ink); color: var(--white); }
+    .badge-soft { background: var(--red-soft); color: var(--red-dark); }
+    .badge-green { background: #dcfce7; color: #15803d; }
+    .hero-image .badge { position: absolute; z-index: 2; left: 18px; top: 18px; }
+    .hero-card-body { padding: 22px; }
+    .kicker { color: var(--red); font-weight: 700; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; }
+    .hero-card h2 { margin: 8px 0 6px; font-size: 24px; letter-spacing: -.03em; line-height: 1.15; font-weight: 700; font-family: var(--font-serif); }
+    .muted { color: var(--muted); }
+    .location {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 500;
+    }
+    .property-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 16px 0;
+    }
+    .meta-pill {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 7px 12px;
+      color: var(--ink-2);
+      background: var(--bg);
+      font-size: 12.5px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .price-line { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 16px; }
+    .price { font-size: 26px; font-weight: 700; color: var(--red-dark); letter-spacing: -.04em; font-family: var(--font-serif); }
+    .floating-note {
+      position: absolute;
+      left: 0;
+      bottom: -118px;
+      width: min(100%, 500px);
+      border-radius: 20px;
+      background: var(--ink);
+      color: var(--white);
+      box-shadow: var(--shadow-lg);
+      padding: 18px;
+      display: grid;
+      grid-template-columns: 40px 1fr;
+      gap: 14px;
+      align-items: center;
+      border: 1px solid rgba(255,255,255,.08);
+    }
+    .floating-icon {
+      width: 40px; height: 40px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      background: var(--red);
+    }
+    .floating-note strong { display: block; font-size: 13.5px; font-weight: 600; }
+    .floating-note span { display: block; margin-top: 3px; font-size: 12px; color: rgba(255,255,255,.58); line-height: 1.4; }
+
+
+    /* ── HERO CARD / FLOATING NOTE FIX ──
+       Mantiene la nota visible en desktop sin tapar la imagen ni quedar debajo del buscador. */
+    @media (min-width: 761px) {
+      .hero-media {
+        min-height: 660px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        justify-content: flex-start;
+        gap: 18px;
+      }
+      .hero-card {
+        position: relative;
+        inset: auto;
+        right: auto;
+        top: auto;
+        width: min(100%, 500px);
+        flex: 0 0 auto;
+      }
+      .floating-note {
+        position: relative;
+        left: auto;
+        bottom: auto;
+        width: min(100%, 500px);
+        align-self: flex-end;
+        z-index: 1;
+      }
+    }
+
+    /* ── FILTER ── */
+    .filter-shell {
+      position: relative;
+      z-index: 3;
+      margin-top: -58px;
+    }
+    .filter-panel {
+      background: var(--ink);
+      color: var(--white);
+      border-radius: 24px;
+      box-shadow: var(--shadow-xl);
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.07);
+    }
+    .intent-tabs {
+      display: flex;
+      align-items: stretch;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      overflow-x: auto;
+    }
+    .intent-tab {
+      min-height: 60px;
+      padding: 0 22px;
+      border: 0;
+      background: transparent;
+      color: rgba(255,255,255,.44);
+      font-weight: 600;
+      font-size: 12.5px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      border-bottom: 2px solid transparent;
+      flex: 0 0 auto;
+      transition: color .2s ease, border-color .2s ease, background .2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .intent-tab[aria-selected="true"] {
+      color: var(--white);
+      border-bottom-color: var(--red);
+      background: rgba(255,255,255,.025);
+    }
+    .intent-tab:hover:not([aria-selected="true"]) { color: rgba(255,255,255,.7); }
+    .filter-form {
+      display: grid;
+      grid-template-columns: 1.5fr repeat(4, minmax(140px, 1fr)) auto;
+      gap: 10px;
+      padding: 16px;
+      align-items: end;
+    }
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field label { color: rgba(255,255,255,.6); font-size: 10.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+    .field input, .field select, .field textarea {
+      width: 100%;
+      min-height: 46px;
+      border: 1px solid rgba(255,255,255,.1);
+      background: rgba(255,255,255,.06);
+      color: var(--white);
+      border-radius: 12px;
+      padding: 0 12px;
+      outline: none;
+      transition: border-color .2s ease, background .2s ease, box-shadow .2s ease;
+      font-size: 13.5px;
+    }
+    .field textarea { min-height: 110px; padding: 12px; resize: vertical; }
+    .field input::placeholder { color: rgba(255,255,255,.3); }
+    .field select option { color: var(--ink); background: var(--white); }
+    .field input:focus, .field select:focus, .field textarea:focus {
+      border-color: rgba(200,16,46,.65);
+      background: rgba(255,255,255,.1);
+      box-shadow: 0 0 0 3px rgba(200,16,46,.14);
+    }
+    .filter-submit { min-height: 46px; border-radius: 12px; }
+
+    /* ── SECTIONS ── */
+    .section { padding: 96px 0; }
+    .section.alt { background: var(--bg); }
+    .section.dark { background: var(--ink); color: var(--white); }
+    .section.red { background: var(--red); color: var(--white); }
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      align-items: flex-end;
+      margin-bottom: 36px;
+    }
+    .section-title {
+      margin: 0;
+      font-family: var(--font-serif);
+      font-size: clamp(30px, 4vw, 52px);
+      line-height: 1.05;
+      letter-spacing: -.03em;
+      font-weight: 900;
+    }
+    .section-copy { margin: 14px 0 0; color: var(--muted); max-width: 580px; line-height: 1.8; font-size: 16px; }
+    .dark .section-copy { color: rgba(255,255,255,.55); }
+    .red .section-copy { color: rgba(255,255,255,.8); }
+    .section-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+    /* ── RESULTS TOOLBAR ── */
+    .results-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+      padding: 14px 18px;
+      background: var(--bg);
+      border-radius: 14px;
+      border: 1px solid var(--line);
+    }
+    .result-count { font-size: 14px; font-weight: 600; color: var(--ink); }
+    .sort-select {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 8px 12px;
+      background: var(--white);
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 600;
+      outline: none;
+      cursor: pointer;
+    }
+    .active-filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; min-height: 0; }
+    .filter-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: var(--red-soft);
+      color: var(--red-dark);
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      border: 1px solid rgba(200,16,46,.14);
+    }
+    .filter-chip button {
+      background: none;
+      color: var(--red);
+      font-size: 16px;
+      line-height: 1;
+      padding: 0;
+      width: 16px; height: 16px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      transition: background .2s ease;
+    }
+    .filter-chip button:hover { background: rgba(200,16,46,.12); }
+
+    /* ── PROPERTY CARDS ── */
+    .properties-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 20px;
+    }
+    .property-card {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: transform .3s var(--ease-out), box-shadow .3s ease, border-color .3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+    .property-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+      border-color: rgba(200,16,46,.18);
+    }
+    .card-image {
+      position: relative;
+      height: 210px;
+      overflow: hidden;
+    }
+    .card-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform .5s var(--ease-out);
+    }
+    .property-card:hover .card-image img { transform: scale(1.04); }
+    .card-image .badge { position: absolute; z-index: 2; left: 14px; top: 14px; }
+    .card-body { padding: 20px; flex: 1; display: flex; flex-direction: column; }
+    .card-title { margin: 6px 0 6px; font-size: 17px; font-weight: 700; letter-spacing: -.02em; line-height: 1.25; font-family: var(--font-serif); }
+    .feature-row { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0; }
+    .feature {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 5px 10px;
+      background: var(--bg);
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ink-2);
+      border: 1px solid var(--line);
+    }
+    .card-desc { margin: 0 0 14px; color: var(--muted); font-size: 13.5px; line-height: 1.65; flex: 1; }
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: auto;
+      padding-top: 14px;
+      border-top: 1px solid var(--line);
+    }
+    .card-price { font-size: 20px; font-weight: 700; color: var(--red-dark); letter-spacing: -.03em; font-family: var(--font-serif); }
+    .card-actions { display: flex; gap: 8px; }
+    .icon-btn {
+      width: 40px; height: 40px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: var(--white);
+      display: grid;
+      place-items: center;
+      color: var(--ink);
+      transition: border-color .2s ease, color .2s ease, background .2s ease, transform .2s ease;
+    }
+    .icon-btn:hover { border-color: var(--green); color: var(--green); background: #f0fdf4; transform: scale(1.08); }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      display: none;
+      border: 1.5px dashed rgba(200,16,46,.28);
+      background: var(--white);
+      border-radius: 24px;
+      padding: 56px 40px;
+      text-align: center;
+    }
+    .empty-state.show { display: block; }
+    .empty-state-icon { width: 60px; height: 60px; border-radius: 20px; background: var(--red-soft); display: grid; place-items: center; margin: 0 auto 20px; color: var(--red); }
+    .empty-state h3 { margin: 0 0 10px; font-size: 24px; letter-spacing: -.03em; font-family: var(--font-serif); }
+    .empty-state p { margin: 0 auto 24px; color: var(--muted); max-width: 500px; line-height: 1.7; font-size: 15px; }
+
+    /* ── DETAIL / BENEFITS ── */
+    .detail-grid {
+      display: grid;
+      grid-template-columns: .9fr 1.1fr;
+      gap: 52px;
+      align-items: center;
+    }
+    .benefit-list { display: grid; gap: 20px; margin-top: 32px; }
+    .benefit-item { display: grid; grid-template-columns: 48px 1fr; gap: 16px; align-items: start; }
+    .benefit-num {
+      width: 40px; height: 40px;
+      border-radius: 12px;
+      background: rgba(200,16,46,.12);
+      color: var(--red);
+      font-weight: 700;
+      font-size: 15px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      font-family: var(--font-serif);
+    }
+    .benefit-item h3 { margin: 0 0 5px; font-size: 16px; font-weight: 600; }
+    .benefit-item p { margin: 0; color: rgba(255,255,255,.52); line-height: 1.65; font-size: 14px; }
+    .detail-mock {
+      background: var(--white);
+      color: var(--ink);
+      border-radius: 28px;
+      padding: 16px;
+      border: 1px solid rgba(255,255,255,.08);
+      box-shadow: var(--shadow-xl);
+    }
+    .detail-gallery { display: grid; grid-template-columns: 1.3fr .7fr; gap: 8px; height: 280px; }
+    .detail-gallery img { width: 100%; height: 100%; object-fit: cover; border-radius: 16px; }
+    .detail-gallery .side { display: grid; gap: 8px; }
+    .detail-content { padding: 18px 6px 8px; }
+    .detail-content h3 { margin: 8px 0 8px; font-size: 26px; letter-spacing: -.03em; line-height: 1.15; font-family: var(--font-serif); font-weight: 700; }
+    .map-box {
+      height: 140px;
+      border-radius: 16px;
+      margin-top: 16px;
+      background:
+        linear-gradient(90deg, rgba(14,14,16,.06) 1px, transparent 1px),
+        linear-gradient(rgba(14,14,16,.06) 1px, transparent 1px),
+        #F2F2F4;
+      background-size: 24px 24px;
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 13px;
+      gap: 6px;
+    }
+    .map-box-inner { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+
+    /* ── VALUATION ── */
+    .valuation-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(340px, .78fr);
+      gap: 48px;
+      align-items: center;
+    }
+    .valuation-card {
+      background: var(--white);
+      color: var(--ink);
+      border-radius: 28px;
+      padding: 28px;
+      box-shadow: var(--shadow-xl);
+    }
+    .valuation-card h3 { margin: 0 0 20px; font-size: 22px; letter-spacing: -.03em; font-family: var(--font-serif); font-weight: 700; }
+    .form-grid { display: grid; gap: 14px; }
+    .form-grid .field label { color: var(--muted); }
+    .form-grid .field input, .form-grid .field select, .form-grid .field textarea {
+      background: var(--bg);
+      color: var(--ink);
+      border-color: var(--line);
+    }
+    .form-grid .field input::placeholder, .form-grid .field textarea::placeholder { color: var(--muted-2); }
+    .form-grid .field input:focus, .form-grid .field select:focus, .form-grid .field textarea:focus {
+      border-color: rgba(200,16,46,.6);
+      background: var(--white);
+      box-shadow: 0 0 0 3px rgba(200,16,46,.1);
+    }
+
+    /* ── BENEFIT CARDS ── */
+    .benefits-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+    .benefit-card {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 28px;
+      box-shadow: var(--shadow-sm);
+      transition: transform .3s var(--ease-out), box-shadow .3s ease;
+    }
+    .benefit-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+    .benefit-icon {
+      width: 50px; height: 50px;
+      border-radius: 16px;
+      background: var(--red-soft);
+      color: var(--red);
+      display: grid;
+      place-items: center;
+      margin-bottom: 20px;
+    }
+    .benefit-card h3 { margin: 0 0 10px; font-size: 20px; letter-spacing: -.03em; font-family: var(--font-serif); font-weight: 700; }
+    .benefit-card p { margin: 0; color: var(--muted); line-height: 1.7; font-size: 14.5px; }
+
+    /* ── CONTACT ── */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: minmax(0, .88fr) minmax(420px, 1.12fr);
+      gap: 52px;
+      align-items: center;
+    }
+    .contact-list { display: grid; gap: 14px; margin: 28px 0 32px; }
+    .contact-item {
+      display: grid;
+      grid-template-columns: 42px 1fr;
+      gap: 14px;
+      align-items: center;
+      color: rgba(255,255,255,.75);
+    }
+    .contact-icon {
+      width: 42px; height: 42px;
+      border-radius: 13px;
+      display: grid;
+      place-items: center;
+      background: rgba(255,255,255,.08);
+      color: rgba(255,255,255,.7);
+      flex: 0 0 auto;
+      transition: background .2s ease, color .2s ease;
+    }
+    .contact-icon:hover { background: var(--red); color: var(--white); }
+    .contact-map {
+      height: 400px;
+      border: 1px solid var(--line-dark);
+      border-radius: 28px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(200,16,46,.22), transparent 22%),
+        linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px),
+        linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+        #181820;
+      background-size: auto, 36px 36px, 36px 36px, auto;
+      position: relative;
+      display: grid;
+      place-items: center;
+      color: rgba(255,255,255,.7);
+      font-weight: 600;
+      text-align: center;
+      padding: 28px;
+    }
+    .pin {
+      width: 52px; height: 52px;
+      border-radius: 50% 50% 50% 0;
+      background: var(--red);
+      transform: rotate(-45deg);
+      position: absolute;
+      left: 50%; top: 44%;
+      margin-left: -26px; margin-top: -26px;
+      box-shadow: 0 16px 36px rgba(200,16,46,.36);
+    }
+    .pin::after { content:""; position:absolute; width: 16px; height: 16px; border-radius: 999px; background: var(--white); left: 18px; top: 18px; }
+    .contact-map span { position: relative; z-index: 2; margin-top: 120px; font-size: 13.5px; line-height: 1.6; }
+
+    /* ── FOOTER ── */
+    .footer {
+      background: #0A0A0C;
+      color: rgba(255,255,255,.55);
+      padding: 56px 0 28px;
+      border-top: 1px solid var(--line-dark);
+    }
+    .footer-grid { display: grid; grid-template-columns: 1.2fr repeat(3, .65fr); gap: 36px; }
+    .footer h4 { color: rgba(255,255,255,.82); margin: 0 0 14px; font-size: 12px; text-transform: uppercase; letter-spacing: .14em; font-weight: 700; }
+    .footer p, .footer a { color: rgba(255,255,255,.52); font-size: 13.5px; line-height: 1.9; }
+    .footer a:hover { color: rgba(255,255,255,.85); }
+    .footer-bottom {
+      margin-top: 44px;
+      padding-top: 22px;
+      border-top: 1px solid var(--line-dark);
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      font-size: 12.5px;
+    }
+
+    /* ── MODAL ── */
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal.open { display: flex; }
+    .modal-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.6); backdrop-filter: blur(10px); }
+    .modal-card {
+      position: relative;
+      z-index: 1;
+      width: min(960px, 100%);
+      max-height: min(90vh, 880px);
+      overflow: auto;
+      background: var(--white);
+      border-radius: 28px;
+      box-shadow: var(--shadow-xl);
+      animation: modal-in .3s var(--ease-out);
+    }
+    @keyframes modal-in { from { opacity: 0; transform: scale(.96) translateY(10px); } }
+    .modal-close {
+      position: sticky;
+      top: 14px;
+      margin-left: auto;
+      z-index: 2;
+      width: 40px; height: 40px;
+      border: 0;
+      border-radius: 12px;
+      background: var(--ink);
+      color: var(--white);
+      display: grid;
+      place-items: center;
+      transform: translate(-14px, 14px);
+      transition: background .2s ease, transform .2s ease;
+    }
+    .modal-close:hover { background: var(--red); transform: translate(-14px, 14px) scale(1.06); }
+    .modal-inner { padding: 0 26px 26px; }
+    .modal-layout { display: grid; grid-template-columns: 1fr .8fr; gap: 24px; align-items: start; }
+    .modal-main-img { border-radius: 20px; overflow: hidden; height: 400px; background: var(--bg); }
+    .modal-main-img img { width: 100%; height: 100%; object-fit: cover; }
+    .modal-info h2 { margin: 0 0 10px; font-size: 30px; letter-spacing: -.04em; line-height: 1.08; font-family: var(--font-serif); }
+    .modal-info p { color: var(--muted); line-height: 1.75; font-size: 14.5px; }
+    .modal-actions { display: grid; gap: 10px; margin-top: 22px; }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed;
+      right: 20px;
+      bottom: 88px;
+      z-index: 150;
+      width: min(400px, calc(100% - 40px));
+      background: var(--ink);
+      color: var(--white);
+      border-radius: 16px;
+      padding: 14px 16px;
+      box-shadow: var(--shadow-lg);
+      transform: translateY(20px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .25s ease, transform .25s var(--ease-out);
+      line-height: 1.55;
+      font-size: 13.5px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      border: 1px solid rgba(255,255,255,.08);
+    }
+    .toast.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
+    .toast-icon { flex: 0 0 auto; margin-top: 1px; }
+
+    /* ── WHATSAPP FLOAT ── */
+    .whatsapp-float {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      z-index: 45;
+      width: 56px; height: 56px;
+      border-radius: 999px;
+      background: var(--green);
+      color: var(--white);
+      box-shadow: 0 12px 32px rgba(34,197,94,.36);
+      display: grid;
+      place-items: center;
+      transition: transform .3s var(--ease-out), box-shadow .3s ease;
+    }
+    .whatsapp-float:hover { transform: scale(1.1) translateY(-2px); box-shadow: 0 18px 40px rgba(34,197,94,.42); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1120px) {
+      .hero-grid, .detail-grid, .valuation-grid, .contact-grid { grid-template-columns: 1fr; }
+      .hero-grid { padding-top: 52px; min-height: unset; }
+      .hero-media { min-height: 540px; }
+      .hero-card { left: 0; right: auto; }
+      .filter-form { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .properties-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .nav-links { display: none; }
+      .menu-btn { display: flex; }
+    }
+    @media (max-width: 760px) {
+      :root { --safe: 18px; }
+      .nav { height: 66px; }
+      .brand { min-width: auto; }
+      .brand-sub { display: none; }
+      .nav-actions .btn-whatsapp { display: none; }
+      .hero h1 { font-size: 42px; }
+      .hero-copy { font-size: 15.5px; }
+      .hero-actions { flex-direction: column; }
+      .hero-actions .btn { width: 100%; }
+      .trust-row { grid-template-columns: 1fr; }
+      .hero-media { min-height: 460px; }
+      .hero-card { width: 100%; }
+      .hero-image { height: 200px; }
+      .floating-note { display: none; }
+      .filter-shell { margin-top: -30px; }
+      .intent-tab { padding: 0 14px; font-size: 11.5px; }
+      .filter-form { grid-template-columns: 1fr; padding: 14px; }
+      .filter-submit { width: 100%; }
+      .section { padding: 68px 0; }
+      .section-head, .results-toolbar { align-items: flex-start; flex-direction: column; }
+      .properties-grid, .benefits-grid, .footer-grid { grid-template-columns: 1fr; }
+      .detail-gallery { height: auto; grid-template-columns: 1fr; }
+      .detail-gallery img { height: 200px; }
+      .valuation-grid { gap: 28px; }
+      .contact-grid { grid-template-columns: 1fr; }
+      .contact-map { height: 280px; }
+      .modal-layout { grid-template-columns: 1fr; }
+      .modal-main-img { height: 260px; }
+      .modal-info h2 { font-size: 26px; }
+      .card-footer { flex-direction: column; align-items: flex-start; }
+      .card-actions { width: 100%; }
+      .card-actions .btn { flex: 1; }
+      .price-line { flex-direction: column; align-items: flex-start; }
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .anim-fadeup { animation: fadeUp .6s var(--ease-out) both; }
+    .anim-delay-1 { animation-delay: .08s; }
+    .anim-delay-2 { animation-delay: .16s; }
+    .anim-delay-3 { animation-delay: .24s; }
+    .anim-delay-4 { animation-delay: .32s; }
+  </style>
+</head>
+<body>
+  <!-- TOP NOTE -->
+  <div class="top-note" role="note">
+    <span class="top-note-dot" aria-hidden="true"></span>
+    <strong>Prototipo interactivo:</strong> filtros en tiempo real, ficha de propiedad, consultas por WhatsApp y captación de tasaciones.
+  </div>
+
+  <!-- HEADER -->
+  <header class="site-header" id="siteHeader">
+    <div class="container nav" aria-label="Navegación principal">
+      <a href="#inicio" class="brand" aria-label="Ir al inicio">
+        <span class="brand-mark" aria-hidden="true">
+          <!-- Logo A de Ameghino -->
+          <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8 30L20 8L32 30H26.5L20 18.5L13.5 30H8Z" fill="white" fill-opacity=".95"/>
+            <path d="M16.5 30V23.5H23.5V30H16.5Z" fill="#E5252A"/>
+          </svg>
+        </span>
+        <span>
+          <span class="brand-title">AMEGHINO</span>
+          <span class="brand-sub">Inmobiliaria · Jesús María</span>
+        </span>
+      </a>
+      <nav class="nav-links" aria-label="Secciones">
+        <a href="#propiedades">Propiedades</a>
+        <a href="#tasaciones">Tasaciones</a>
+        <a href="#beneficios">Nosotros</a>
+        <a href="#contacto">Contacto</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="btn btn-whatsapp js-demo-wa" data-context="consulta general">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.136.565 4.14 1.545 5.875L.057 23.5l5.797-1.522A11.956 11.956 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.006-1.373l-.36-.214-3.716.975.993-3.62-.234-.375A9.818 9.818 0 0112 2.182c5.432 0 9.818 4.386 9.818 9.818S17.432 21.818 12 21.818z"/></svg>
+          Consultar
+        </button>
+        <button class="menu-btn" id="menuBtn" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobileMenu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="#propiedades">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Propiedades
+      </a>
+      <a href="#tasaciones">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+        Tasaciones
+      </a>
+      <a href="#beneficios">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        Nosotros
+      </a>
+      <a href="#contacto">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Contacto
+      </a>
+      <button class="btn btn-whatsapp js-demo-wa" data-context="consulta desde menú mobile" style="margin-top:14px;width:100%">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.136.565 4.14 1.545 5.875L.057 23.5l5.797-1.522A11.956 11.956 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.006-1.373l-.36-.214-3.716.975.993-3.62-.234-.375A9.818 9.818 0 0112 2.182c5.432 0 9.818 4.386 9.818 9.818S17.432 21.818 12 21.818z"/></svg>
+        Consultar por WhatsApp
+      </button>
+    </div>
+  </header>
+
+  <main id="inicio">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-bg-grid" aria-hidden="true"></div>
+      <div class="hero-bg-blob" aria-hidden="true"></div>
+      <div class="container hero-grid">
+        <div>
+          <div class="eyebrow anim-fadeup">
+            <span class="eyebrow-line" aria-hidden="true"></span>
+            Agentes de bienes raíces desde 2010
+          </div>
+          <h1 class="anim-fadeup anim-delay-1">Tu próxima propiedad <em>te espera.</em></h1>
+          <p class="hero-copy anim-fadeup anim-delay-2">Ameghino Inmobiliaria acompaña cada etapa de la compra, venta y alquiler de propiedades en Jesús María, Colonia Caroya y la zona norte de Córdoba.</p>
+          <div class="hero-actions anim-fadeup anim-delay-3">
+            <a href="#propiedades" class="btn btn-dark btn-lg">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              Ver propiedades
+            </a>
+            <a href="#tasaciones" class="btn btn-ghost btn-lg">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 010 7H6"/></svg>
+              Tasá tu propiedad
+            </a>
+          </div>
+          <div class="trust-row anim-fadeup anim-delay-4" aria-label="Indicadores de confianza">
+            <div class="trust-item"><strong>+125</strong><span>publicaciones activas</span></div>
+            <div class="trust-item"><strong>MP 4807</strong><span>matrícula profesional</span></div>
+            <div class="trust-item"><strong>17–21 hs</strong><span>horario de atención</span></div>
+          </div>
+        </div>
+        <div class="hero-media" aria-label="Propiedad destacada">
+          <article class="hero-card">
+            <div class="hero-image" style="background-image:url('https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=1100&q=82')">
+              <span class="badge badge-red">Destacada</span>
+            </div>
+            <div class="hero-card-body">
+              <div class="kicker">Nueva publicación</div>
+              <h2>Casa en venta · Barrio residencial</h2>
+              <div class="location">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                Jesús María, Córdoba
+              </div>
+              <div class="property-meta">
+                <span class="meta-pill">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                  3 dormitorios
+                </span>
+                <span class="meta-pill">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16M4 12a2 2 0 01-2-2V6h20v4a2 2 0 01-2 2M4 12v4a2 2 0 002 2h12a2 2 0 002-2v-4M10 6V4a2 2 0 012-2v0a2 2 0 012 2v2"/></svg>
+                  2 baños
+                </span>
+                <span class="meta-pill">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                  Cochera
+                </span>
+              </div>
+              <div class="price-line">
+                <div class="price">USD 95.000</div>
+                <button class="btn btn-whatsapp js-demo-wa" data-context="Casa en venta · Barrio residencial">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.136.565 4.14 1.545 5.875L.057 23.5l5.797-1.522A11.956 11.956 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.006-1.373l-.36-.214-3.716.975.993-3.62-.234-.375A9.818 9.818 0 0112 2.182c5.432 0 9.818 4.386 9.818 9.818S17.432 21.818 12 21.818z"/></svg>
+                  Consultar
+                </button>
+              </div>
+            </div>
+          </article>
+          <aside class="floating-note" aria-label="Ficha lista para compartir">
+            <div class="floating-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 017.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+            </div>
+            <div>
+              <strong>Ficha lista para compartir</strong>
+              <span>Cada propiedad puede enviarse por Instagram o WhatsApp con consulta directa.</span>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- FILTER PANEL -->
+    <section class="filter-shell container" aria-labelledby="filtros-title">
+      <div class="filter-panel">
+        <div class="intent-tabs" role="tablist" aria-label="Tipo de necesidad">
+          <button class="intent-tab" type="button" data-intent="venta" aria-selected="true">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+            Comprar
+          </button>
+          <button class="intent-tab" type="button" data-intent="alquiler" aria-selected="false">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+            Alquilar
+          </button>
+          <button class="intent-tab" type="button" data-intent="tasacion" aria-selected="false">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 010 7H6"/></svg>
+            Tasación
+          </button>
+        </div>
+        <form class="filter-form" id="filtersForm">
+          <h2 id="filtros-title" class="sr-only">Buscar propiedades</h2>
+          <div class="field">
+            <label for="searchInput">Ciudad, barrio o dirección</label>
+            <input id="searchInput" name="search" type="search" placeholder="Ej: Centro, Caroya, terreno…" autocomplete="off" />
+          </div>
+          <div class="field">
+            <label for="operationSelect">Operación</label>
+            <select id="operationSelect" name="operation">
+              <option value="venta">Venta</option>
+              <option value="alquiler">Alquiler</option>
+              <option value="">Todas</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="typeSelect">Tipo</label>
+            <select id="typeSelect" name="type">
+              <option value="">Todos</option>
+              <option value="casa">Casa</option>
+              <option value="departamento">Departamento</option>
+              <option value="terreno">Terreno</option>
+              <option value="local">Local</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="locationSelect">Localidad</label>
+            <select id="locationSelect" name="location">
+              <option value="">Todas</option>
+              <option value="Jesús María">Jesús María</option>
+              <option value="Colonia Caroya">Colonia Caroya</option>
+              <option value="Sinsacate">Sinsacate</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="priceSelect">Precio máximo</label>
+            <select id="priceSelect" name="price">
+              <option value="">Sin límite</option>
+              <option value="50000">Hasta USD 50.000</option>
+              <option value="100000">Hasta USD 100.000</option>
+              <option value="150000">Hasta USD 150.000</option>
+              <option value="999999">Más opciones</option>
+            </select>
+          </div>
+          <button class="btn btn-primary filter-submit" type="submit">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            Buscar
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- PROPERTIES GRID -->
+    <section class="section alt" id="propiedades">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow"><span class="eyebrow-line"></span>Propiedades destacadas</div>
+            <h2 class="section-title">Oportunidades seleccionadas</h2>
+            <p class="section-copy">Filtros simples para no frenar la consulta: el usuario ve rápido qué hay disponible y puede escribir por la propiedad exacta.</p>
+          </div>
+          <div class="section-actions">
+            <button class="btn btn-soft" id="resetFilters">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+              Limpiar filtros
+            </button>
+            <button class="btn btn-dark js-demo-wa" data-context="búsqueda personalizada">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.136.565 4.14 1.545 5.875L.057 23.5l5.797-1.522A11.956 11.956 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.006-1.373l-.36-.214-3.716.975.993-3.62-.234-.375A9.818 9.818 0 0112 2.182c5.432 0 9.818 4.386 9.818 9.818S17.432 21.818 12 21.818z"/></svg>
+              Búsqueda personalizada
+            </button>
+          </div>
+        </div>
+        <div class="results-toolbar">
+          <div>
+            <div class="result-count" id="resultCount">0 propiedades encontradas</div>
+            <div style="font-size:12.5px;margin-top:3px;color:var(--muted)">Resultados actualizados en tiempo real.</div>
+          </div>
+          <label style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--muted)">
+            Ordenar por
+            <select class="sort-select" id="sortSelect">
+              <option value="featured">Relevancia</option>
+              <option value="priceAsc">Menor precio</option>
+              <option value="priceDesc">Mayor precio</option>
+              <option value="areaDesc">Mayor superficie</option>
+            </select>
+          </label>
+        </div>
+        <div class="active-filters" id="activeFilters" aria-live="polite"></div>
+        <div class="properties-grid" id="propertiesGrid"></div>
+        <div class="empty-state" id="emptyState">
+          <div class="empty-state-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </div>
+          <h3>No encontramos propiedades con esos filtros</h3>
+          <p>En vez de dejar al usuario sin salida, la web puede ofrecer una búsqueda personalizada por WhatsApp para captar la consulta igual.</p>
+          <button class="btn btn-whatsapp js-demo-wa" data-context="búsqueda sin resultados">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.136.565 4.14 1.545 5.875L.057 23.5l5.797-1.522A11.956 11.956 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.006-1.373l-.36-.214-3.716.975.993-3.62-.234-.375A9.818 9.818 0 0112 2.182c5.432 0 9.818 4.386 9.818 9.818S17.432 21.818 12 21.818z"/></svg>
+            Consultar búsqueda personalizada
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- WHY US (DARK) -->
+    <section class="section dark" id="beneficios">
+      <div class="container detail-grid">
+        <div>
+          <div class="eyebrow"><span class="eyebrow-line"></span>Por qué elegirnos</div>
+          <h2 class="section-title">Más de 15 años en el mercado local</h2>
+          <p class="section-copy">Una web bien planteada no solo muestra inmuebles: transmite respaldo, ordena la información y reduce consultas repetidas.</p>
+          <div class="benefit-list">
+            <div class="benefit-item">
+              <div class="benefit-num">01</div>
+              <div><h3>Matrícula profesional</h3><p>M.P. 4807 y perito tasador 0622 con respaldo legal y ético visible.</p></div>
+            </div>
+            <div class="benefit-item">
+              <div class="benefit-num">02</div>
+              <div><h3>Tasación sin costo</h3><p>Bloque específico para captar propietarios que quieran vender o alquilar.</p></div>
+            </div>
+            <div class="benefit-item">
+              <div class="benefit-num">03</div>
+              <div><h3>Consulta contextual</h3><p>WhatsApp por propiedad para que el mensaje llegue con el inmueble ya identificado.</p></div>
+            </div>
+            <div class="benefit-item">
+              <div class="benefit-num">04</div>
+              <div><h3>Atención local</h3><p>Jesús María, Colonia Caroya, Sinsacate y zona norte de Córdoba.</p></div>
+            </div>
+          </div>
+        </div>
+        <div class="detail-mock">
+          <div class="detail-gallery">
+            <img src="https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?auto=format&fit=crop&w=900&q=82" alt="Living luminoso de casa en venta" loading="lazy" />
+            <div class="side">
+              <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=600&q=82" alt="Cocina moderna" loading="lazy" />
+              <img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=600&q=82" alt="Dormitorio de propiedad" loading="lazy" />
+            </div>
+          </div>
+          <div class="detail-content">
+            <div class="kicker">Ficha individual</div>
+            <h3>Casa en venta en Jesús María</h3>
+            <div class="location">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              Barrio Centro · Jesús María
+            </div>
+            <div class="feature-row">
+              <span class="feature">3 ambientes</span>
+              <span class="feature">2 baños</span>
+              <span class="feature">180 m²</span>
+              <span class="feature">Cochera</span>
+            </div>
+            <button class="btn btn-whatsapp js-demo-wa" data-context="ficha individual demo" style="margin-top:14px">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.136.565 4.14 1.545 5.875L.057 23.5l5.797-1.522A11.956 11.956 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.006-1.373l-.36-.214-3.716.975.993-3.62-.234-.375A9.818 9.818 0 0112 2.182c5.432 0 9.818 4.386 9.818 9.818S17.432 21.818 12 21.818z"/></svg>
+              Consultar por esta propiedad
+            </button>
+            <div class="map-box">
+              <div class="map-box-inner">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                Mapa / ubicación aproximada
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TASACIONES (RED) -->
+    <section class="section red" id="tasaciones">
+      <div class="container valuation-grid">
+        <div>
+          <div class="eyebrow" style="color:rgba(255,255,255,.85)"><span class="eyebrow-line"></span>Captación de propietarios</div>
+          <h2 class="section-title">¿Querés vender o tasás tu propiedad?</h2>
+          <p class="section-copy">La landing también funciona para captar nuevos inmuebles: propietarios que quieren vender, alquilar o conocer el valor real de su propiedad.</p>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:32px">
+            <button class="btn btn-white btn-lg js-scroll" data-target="#valuationForm">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 010 7H6"/></svg>
+              Solicitar tasación
+            </button>
+            <button class="btn btn-ghost js-demo-wa" data-context="tasación por WhatsApp" style="color:white;border-color:rgba(255,255,255,.4)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.136.565 4.14 1.545 5.875L.057 23.5l5.797-1.522A11.956 11.956 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.006-1.373l-.36-.214-3.716.975.993-3.62-.234-.375A9.818 9.818 0 0112 2.182c5.432 0 9.818 4.386 9.818 9.818S17.432 21.818 12 21.818z"/></svg>
+              Escribir por WhatsApp
+            </button>
+          </div>
+        </div>
+        <form class="valuation-card" id="valuationForm" novalidate>
+          <h3>Solicitud de tasación</h3>
+          <div class="form-grid">
+            <div class="field">
+              <label for="nameField">Nombre</label>
+              <input id="nameField" required placeholder="Nombre y apellido" />
+            </div>
+            <div class="field">
+              <label for="phoneField">Teléfono</label>
+              <input id="phoneField" required placeholder="Ej: 3525 000000" inputmode="tel" />
+            </div>
+            <div class="field">
+              <label for="kindField">Tipo de propiedad</label>
+              <select id="kindField" required>
+                <option value="">Seleccionar</option>
+                <option>Casa</option>
+                <option>Departamento</option>
+                <option>Terreno</option>
+                <option>Local</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="messageField">Mensaje</label>
+              <textarea id="messageField" placeholder="Contanos localidad, superficie aproximada y tipo de operación."></textarea>
+            </div>
+            <button class="btn btn-primary btn-lg" type="submit">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              Enviar solicitud
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- BENEFIT CARDS -->
+    <section class="section" aria-labelledby="beneficios-title">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow"><span class="eyebrow-line"></span>UX orientado a conversión</div>
+            <h2 class="section-title" id="beneficios-title">Menos fricción, más consultas</h2>
+          </div>
+        </div>
+        <div class="benefits-grid">
+          <article class="benefit-card">
+            <div class="benefit-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </div>
+            <h3>Atención local</h3>
+            <p>La propuesta refuerza la zona real de trabajo: Jesús María, Colonia Caroya y alrededores.</p>
+          </article>
+          <article class="benefit-card">
+            <div class="benefit-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.136.565 4.14 1.545 5.875L.057 23.5l5.797-1.522A11.956 11.956 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.006-1.373l-.36-.214-3.716.975.993-3.62-.234-.375A9.818 9.818 0 0112 2.182c5.432 0 9.818 4.386 9.818 9.818S17.432 21.818 12 21.818z"/></svg>
+            </div>
+            <h3>Consulta rápida</h3>
+            <p>Cada propiedad tiene un CTA propio para que el mensaje llegue con contexto y menos ida y vuelta.</p>
+          </article>
+          <article class="benefit-card">
+            <div class="benefit-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            </div>
+            <h3>Información clara</h3>
+            <p>Foto, operación, ubicación, precio, superficie y características aparecen ordenadas antes de consultar.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT (DARK) -->
+    <section class="section dark" id="contacto">
+      <div class="container contact-grid">
+        <div>
+          <div class="eyebrow"><span class="eyebrow-line"></span>Contacto rápido</div>
+          <h2 class="section-title">Ameghino Inmobiliaria</h2>
+          <p class="section-copy">Una sección final clara evita que el usuario tenga que volver a Instagram para saber dirección, horarios o canales de contacto.</p>
+          <div class="contact-list">
+            <div class="contact-item">
+              <div class="contact-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              </div>
+              <span>Pío León 125 P.A Of. 7 · Jesús María, Córdoba</span>
+            </div>
+            <div class="contact-item">
+              <div class="contact-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              </div>
+              <span>Lunes a viernes de 17 a 21 hs</span>
+            </div>
+            <div class="contact-item">
+              <div class="contact-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+              </div>
+              <span>@ameghinoinmobiliaria125</span>
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap">
+            <button class="btn btn-whatsapp js-demo-wa" data-context="contacto final">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.136.565 4.14 1.545 5.875L.057 23.5l5.797-1.522A11.956 11.956 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.006-1.373l-.36-.214-3.716.975.993-3.62-.234-.375A9.818 9.818 0 0112 2.182c5.432 0 9.818 4.386 9.818 9.818S17.432 21.818 12 21.818z"/></svg>
+              Enviar WhatsApp
+            </button>
+            <button class="btn btn-ghost js-toast" data-message="En la versión final este botón abriría Google Maps con la ubicación real." style="color:white;border-color:rgba(255,255,255,.28)">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+              Ver ubicación
+            </button>
+          </div>
+        </div>
+        <div class="contact-map" aria-label="Mapa de ubicación aproximada">
+          <div class="pin" aria-hidden="true"></div>
+          <span>Pío León 125 · Jesús María<br><small style="color:rgba(255,255,255,.5);font-weight:400;font-size:12px">Bloque visual de mapa para la versión final</small></span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <a href="#inicio" class="brand" style="color:white;margin-bottom:18px;display:inline-flex">
+            <span class="brand-mark" aria-hidden="true">
+              <svg viewBox="0 0 40 40" fill="none"><path d="M8 30L20 8L32 30H26.5L20 18.5L13.5 30H8Z" fill="white" fill-opacity=".9"/><path d="M16.5 30V23.5H23.5V30H16.5Z" fill="#E5252A"/></svg>
+            </span>
+            <span>
+              <span class="brand-title">AMEGHINO</span>
+              <span class="brand-sub" style="color:rgba(255,255,255,.5)">Inmobiliaria</span>
+            </span>
+          </a>
+          <p style="max-width:280px">Agentes de bienes raíces en Jesús María, Córdoba. M.P. 4807 · Perito Tasador 0622.</p>
+        </div>
+        <div>
+          <h4>Servicios</h4>
+          <a href="#propiedades" style="display:block">Compra y venta</a>
+          <a href="#propiedades" style="display:block">Alquileres</a>
+          <a href="#tasaciones" style="display:block">Tasaciones</a>
+        </div>
+        <div>
+          <h4>Empresa</h4>
+          <a href="#beneficios" style="display:block">Nosotros</a>
+          <a href="#contacto" style="display:block">Contacto</a>
+        </div>
+        <div>
+          <h4>Zonas</h4>
+          <p>Jesús María<br>Colonia Caroya<br>Sinsacate<br>Zona norte</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>Propuesta visual e interactiva por DiazUXStudio.</span>
+        <span>Demo UX/UI · No es sitio final publicado.</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- WHATSAPP FLOAT -->
+  <button class="whatsapp-float js-demo-wa" data-context="botón flotante" aria-label="Consultar por WhatsApp">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.136.565 4.14 1.545 5.875L.057 23.5l5.797-1.522A11.956 11.956 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.006-1.373l-.36-.214-3.716.975.993-3.62-.234-.375A9.818 9.818 0 0112 2.182c5.432 0 9.818 4.386 9.818 9.818S17.432 21.818 12 21.818z"/></svg>
+  </button>
+
+  <!-- MODAL -->
+  <div class="modal" id="propertyModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-hidden="true">
+    <div class="modal-backdrop" data-close-modal></div>
+    <article class="modal-card">
+      <button class="modal-close" data-close-modal aria-label="Cerrar ficha">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <div class="modal-inner" id="modalContent"></div>
+    </article>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <span class="toast-icon">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    </span>
+    <span id="toastText"></span>
+  </div>
+
+  <script>
+    const WA_NUMBER = "5490000000000";
+
+    // ── Scroll header shadow ──
+    const header = document.getElementById("siteHeader");
+    window.addEventListener("scroll", () => {
+      header.classList.toggle("scrolled", window.scrollY > 10);
+    }, { passive: true });
+
+    // ── Properties data ──
+    const properties = [
+      {
+        id: 1,
+        title: "Casa familiar en B° Centro",
+        operation: "venta",
+        type: "casa",
+        location: "Jesús María",
+        area: 180,
+        rooms: 3,
+        baths: 2,
+        price: 92000,
+        priceLabel: "USD 92.000",
+        badge: "Destacada",
+        featured: true,
+        image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=900&q=82",
+        desc: "Casa cómoda y luminosa ubicada en zona céntrica, ideal para familia. Cuenta con patio, cochera y ambientes bien distribuidos."
+      },
+      {
+        id: 2,
+        title: "Departamento moderno",
+        operation: "venta",
+        type: "departamento",
+        location: "Jesús María",
+        area: 65,
+        rooms: 2,
+        baths: 1,
+        price: 28000,
+        priceLabel: "USD 28.000",
+        badge: "Nuevo",
+        featured: true,
+        image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=900&q=82",
+        desc: "Departamento funcional para inversión o primera vivienda, con buena iluminación y acceso rápido a servicios."
+      },
+      {
+        id: 3,
+        title: "Casa colonial con patio",
+        operation: "alquiler",
+        type: "casa",
+        location: "Jesús María",
+        area: 140,
+        rooms: 2,
+        baths: 1,
+        price: 280000,
+        priceLabel: "$ 280.000/mes",
+        badge: "Alquiler",
+        featured: true,
+        image: "https://images.unsplash.com/photo-1598228723793-52759bba239c?auto=format&fit=crop&w=900&q=82",
+        desc: "Casa en alquiler con estilo tradicional, patio y buena ubicación. Opción ideal para quienes buscan tranquilidad cerca del centro."
+      },
+      {
+        id: 4,
+        title: "Terreno amplio con servicios",
+        operation: "venta",
+        type: "terreno",
+        location: "Colonia Caroya",
+        area: 450,
+        rooms: 0,
+        baths: 0,
+        price: 39000,
+        priceLabel: "USD 39.000",
+        badge: "Oportunidad",
+        featured: false,
+        image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=900&q=82",
+        desc: "Terreno con buena superficie, servicios disponibles y escritura. Pensado para vivienda familiar o inversión local."
+      },
+      {
+        id: 5,
+        title: "Local comercial céntrico",
+        operation: "alquiler",
+        type: "local",
+        location: "Jesús María",
+        area: 90,
+        rooms: 1,
+        baths: 1,
+        price: 350000,
+        priceLabel: "$ 350.000/mes",
+        badge: "Comercial",
+        featured: false,
+        image: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=900&q=82",
+        desc: "Local con frente visible y buena circulación peatonal. Útil para comercio, oficina o servicios profesionales."
+      },
+      {
+        id: 6,
+        title: "Casa con jardín y cochera",
+        operation: "venta",
+        type: "casa",
+        location: "Sinsacate",
+        area: 210,
+        rooms: 4,
+        baths: 2,
+        price: 125000,
+        priceLabel: "USD 125.000",
+        badge: "Nueva",
+        featured: false,
+        image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=900&q=82",
+        desc: "Casa amplia en zona tranquila, con jardín, cochera y espacios para familia. Buena conexión con Jesús María."
+      }
+    ];
+
+    const state = { operation: "venta", type: "", location: "", price: "", search: "", sort: "featured" };
+    const grid         = document.getElementById("propertiesGrid");
+    const resultCount  = document.getElementById("resultCount");
+    const activeFilters= document.getElementById("activeFilters");
+    const emptyState   = document.getElementById("emptyState");
+    const form         = document.getElementById("filtersForm");
+    const operationSelect = document.getElementById("operationSelect");
+    const typeSelect   = document.getElementById("typeSelect");
+    const locationSelect  = document.getElementById("locationSelect");
+    const priceSelect  = document.getElementById("priceSelect");
+    const searchInput  = document.getElementById("searchInput");
+    const sortSelect   = document.getElementById("sortSelect");
+    const modal        = document.getElementById("propertyModal");
+    const modalContent = document.getElementById("modalContent");
+    const toast        = document.getElementById("toast");
+    const toastText    = document.getElementById("toastText");
+
+    function formatOperation(op) {
+      return op === "venta" ? "Venta" : op === "alquiler" ? "Alquiler" : "Todas";
+    }
+    function normalize(v) {
+      return String(v || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    }
+
+    // SVG icons for property cards
+    const svgArea   = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>`;
+    const svgRooms  = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>`;
+    const svgBath   = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16M4 12a2 2 0 01-2-2V6h20v4a2 2 0 01-2 2"/></svg>`;
+    const svgPin    = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>`;
+    const svgWA     = `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.136.565 4.14 1.545 5.875L.057 23.5l5.797-1.522A11.956 11.956 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.006-1.373l-.36-.214-3.716.975.993-3.62-.234-.375A9.818 9.818 0 0112 2.182c5.432 0 9.818 4.386 9.818 9.818S17.432 21.818 12 21.818z"/></svg>`;
+
+    function applyFilters() {
+      let list = properties.filter(p => {
+        const text = normalize(`${p.title} ${p.location} ${p.type} ${p.desc}`);
+        const matchesSearch    = !state.search    || text.includes(normalize(state.search));
+        const matchesOperation = !state.operation || p.operation === state.operation;
+        const matchesType      = !state.type      || p.type === state.type;
+        const matchesLocation  = !state.location  || p.location === state.location;
+        const matchesPrice     = !state.price     || Number(p.price) <= Number(state.price);
+        return matchesSearch && matchesOperation && matchesType && matchesLocation && matchesPrice;
+      });
+
+      list.sort((a, b) => {
+        if (state.sort === "priceAsc")  return a.price - b.price;
+        if (state.sort === "priceDesc") return b.price - a.price;
+        if (state.sort === "areaDesc")  return b.area - a.area;
+        return Number(b.featured) - Number(a.featured) || a.id - b.id;
+      });
+
+      renderProperties(list);
+      renderActiveFilters();
+    }
+
+    function renderProperties(list) {
+      resultCount.textContent = `${list.length} ${list.length === 1 ? "propiedad encontrada" : "propiedades encontradas"}`;
+      emptyState.classList.toggle("show", list.length === 0);
+      grid.style.display = list.length ? "grid" : "none";
+      grid.innerHTML = list.map(p => `
+        <article class="property-card">
+          <div class="card-image">
+            <img src="${p.image}" alt="${p.title} en ${p.location}" loading="lazy" />
+            <span class="badge ${p.operation === "alquiler" ? "badge-dark" : "badge-red"}">${p.badge}</span>
+          </div>
+          <div class="card-body">
+            <div class="kicker">${formatOperation(p.operation)} · ${p.type}</div>
+            <h3 class="card-title">${p.title}</h3>
+            <div class="location">${svgPin} ${p.location}, Córdoba</div>
+            <div class="feature-row">
+              <span class="feature">${svgArea} ${p.area} m²</span>
+              ${p.rooms ? `<span class="feature">${svgRooms} ${p.rooms} amb.</span>` : `<span class="feature">Lote</span>`}
+              ${p.baths ? `<span class="feature">${svgBath} ${p.baths} baño${p.baths > 1 ? "s" : ""}</span>` : `<span class="feature">Servicios</span>`}
+            </div>
+            <p class="card-desc">${p.desc}</p>
+            <div class="card-footer">
+              <div class="card-price">${p.priceLabel}</div>
+              <div class="card-actions">
+                <button class="btn btn-ghost" data-open-property="${p.id}" style="font-size:13px">Ver ficha</button>
+                <button class="icon-btn js-demo-wa" data-context="${p.title}" aria-label="Consultar por WhatsApp">${svgWA}</button>
+              </div>
+            </div>
+          </div>
+        </article>
+      `).join("");
+    }
+
+    function renderActiveFilters() {
+      const chips = [];
+      if (state.operation) chips.push(["operation", formatOperation(state.operation)]);
+      if (state.type)      chips.push(["type",      state.type.charAt(0).toUpperCase() + state.type.slice(1)]);
+      if (state.location)  chips.push(["location",  state.location]);
+      if (state.price)     chips.push(["price",     priceSelect.options[priceSelect.selectedIndex].text]);
+      if (state.search)    chips.push(["search",    `"${state.search}"`]);
+      activeFilters.innerHTML = chips.map(([key, label]) =>
+        `<span class="filter-chip">${label}<button type="button" aria-label="Quitar filtro ${label}" data-remove-filter="${key}">×</button></span>`
+      ).join("");
+    }
+
+    function syncFromForm() {
+      state.operation = operationSelect.value;
+      state.type      = typeSelect.value;
+      state.location  = locationSelect.value;
+      state.price     = priceSelect.value;
+      state.search    = searchInput.value.trim();
+      state.sort      = sortSelect.value;
+      document.querySelectorAll(".intent-tab").forEach(btn =>
+        btn.setAttribute("aria-selected", String(btn.dataset.intent === state.operation))
+      );
+    }
+
+    form.addEventListener("submit", e => {
+      e.preventDefault();
+      syncFromForm();
+      applyFilters();
+      showToast("Filtros aplicados. Los resultados se actualizaron en la grilla.");
+    });
+
+    [operationSelect, typeSelect, locationSelect, priceSelect, sortSelect].forEach(el =>
+      el.addEventListener("change", () => { syncFromForm(); applyFilters(); })
+    );
+    searchInput.addEventListener("input", () => { syncFromForm(); applyFilters(); });
+
+    document.querySelectorAll(".intent-tab").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const intent = btn.dataset.intent;
+        if (intent === "tasacion") {
+          document.getElementById("tasaciones").scrollIntoView({ behavior: "smooth" });
+          showToast("Tasación no mezcla filtros: lleva directo al formulario de captación.");
+          return;
+        }
+        operationSelect.value = intent;
+        syncFromForm();
+        applyFilters();
+      });
+    });
+
+    document.getElementById("resetFilters").addEventListener("click", () => {
+      state.operation = ""; state.type = ""; state.location = ""; state.price = ""; state.search = ""; state.sort = "featured";
+      operationSelect.value = ""; typeSelect.value = ""; locationSelect.value = "";
+      priceSelect.value = ""; searchInput.value = ""; sortSelect.value = "featured";
+      document.querySelectorAll(".intent-tab").forEach(btn => btn.setAttribute("aria-selected", "false"));
+      applyFilters();
+      showToast("Filtros limpiados. Se muestran todas las propiedades demo.");
+    });
+
+    document.addEventListener("click", e => {
+      const remove  = e.target.closest("[data-remove-filter]");
+      if (remove) {
+        const key = remove.dataset.removeFilter;
+        state[key] = "";
+        if (key === "operation") operationSelect.value = "";
+        if (key === "type")      typeSelect.value = "";
+        if (key === "location")  locationSelect.value = "";
+        if (key === "price")     priceSelect.value = "";
+        if (key === "search")    searchInput.value = "";
+        syncFromForm(); applyFilters(); return;
+      }
+      const openBtn = e.target.closest("[data-open-property]");
+      if (openBtn) { openProperty(Number(openBtn.dataset.openProperty)); return; }
+      const waBtn   = e.target.closest(".js-demo-wa");
+      if (waBtn)   { demoWhatsApp(waBtn.dataset.context || "consulta"); return; }
+      const toastBtn= e.target.closest(".js-toast");
+      if (toastBtn){ showToast(toastBtn.dataset.message); return; }
+      const scrollBtn = e.target.closest(".js-scroll");
+      if (scrollBtn) { document.querySelector(scrollBtn.dataset.target).scrollIntoView({ behavior: "smooth", block: "center" }); return; }
+      if (e.target.closest("[data-close-modal]")) closeModal();
+    });
+
+    function openProperty(id) {
+      const p = properties.find(item => item.id === id);
+      if (!p) return;
+      modalContent.innerHTML = `
+        <div class="modal-layout">
+          <div class="modal-main-img"><img src="${p.image}" alt="${p.title}" /></div>
+          <div class="modal-info">
+            <div class="kicker" style="margin-top:4px">${formatOperation(p.operation)} · ${p.type}</div>
+            <h2 id="modalTitle">${p.title}</h2>
+            <div class="location" style="margin-bottom:14px">
+              ${svgPin} ${p.location}, Córdoba
+            </div>
+            <div class="feature-row">
+              <span class="feature">${svgArea} ${p.area} m²</span>
+              <span class="feature">${svgRooms} ${p.rooms || "Lote"} ${p.rooms ? "amb." : ""}</span>
+              <span class="feature">${svgBath} ${p.baths || "—"} ${p.baths ? "baño" + (p.baths > 1 ? "s" : "") : ""}</span>
+            </div>
+            <div class="price" style="margin:18px 0">${p.priceLabel}</div>
+            <p>${p.desc}</p>
+            <div class="modal-actions">
+              <button class="btn btn-whatsapp js-demo-wa" data-context="${p.title}">
+                ${svgWA} Consultar por esta propiedad
+              </button>
+              <button class="btn btn-ghost" data-close-modal>Cerrar ficha</button>
+            </div>
+          </div>
+        </div>`;
+      modal.classList.add("open");
+      modal.setAttribute("aria-hidden", "false");
+      document.body.classList.add("no-scroll");
+      modal.querySelector(".modal-close").focus();
+    }
+
+    function closeModal() {
+      modal.classList.remove("open");
+      modal.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("no-scroll");
+    }
+
+    document.addEventListener("keydown", e => {
+      if (e.key === "Escape" && modal.classList.contains("open")) closeModal();
+    });
+
+    function demoWhatsApp(context) {
+      const msg = `Hola Ameghino, quiero consultar por ${context}.`;
+      showToast(`Demo WhatsApp: en producción abriría wa.me con el mensaje "${msg}"`);
+      // Producción: window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`, "_blank");
+    }
+
+    function showToast(message) {
+      toastText.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(showToast._timer);
+      showToast._timer = setTimeout(() => toast.classList.remove("show"), 4500);
+    }
+
+    document.getElementById("valuationForm").addEventListener("submit", e => {
+      e.preventDefault();
+      const f = e.currentTarget;
+      if (!f.checkValidity()) { f.reportValidity(); return; }
+      showToast("Solicitud demo enviada. En producción llegaría por email, CRM o WhatsApp.");
+      f.reset();
+    });
+
+    // Mobile menu
+    const menuBtn    = document.getElementById("menuBtn");
+    const mobileMenu = document.getElementById("mobileMenu");
+    menuBtn.addEventListener("click", () => {
+      const open = !mobileMenu.classList.contains("open");
+      mobileMenu.classList.toggle("open", open);
+      menuBtn.classList.toggle("is-open", open);
+      menuBtn.setAttribute("aria-expanded", String(open));
+    });
+    mobileMenu.addEventListener("click", e => {
+      if (e.target.tagName === "A" || e.target.closest(".btn")) {
+        mobileMenu.classList.remove("open");
+        menuBtn.classList.remove("is-open");
+        menuBtn.setAttribute("aria-expanded", "false");
+      }
+    });
+
+    // Init
+    applyFilters();
+  </script>
+</body>
+</html>
